@@ -63,12 +63,6 @@
         <PostUser />
         <PostUser />
         <PostUser />
-        <PostUser />
-        <PostUser />
-        <PostUser />
-        <PostUser />
-        <PostUser />
-        <PostUser />
       </div>
     </div>
   </MainLayout>

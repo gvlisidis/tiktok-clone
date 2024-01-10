@@ -30,7 +30,7 @@
              class="absolute object-cover w-full my-auto z-[-1] h-screen">
       </video>
       <div
-          v-if="true"
+          v-if="!isLoaded"
           class="flex items-center justify-center bg-black bg-opacity-70 h-screen lg:min-w-[480px]">
         <Icon name="mingcute:loading-line" class="animate-spin ml-1" size="100" color="#FFFFFF" />
       </div>
@@ -59,7 +59,10 @@
           </div>
         </div>
 
-        <Icon v-if="true" name="material-symbols:delete-outline-sharp" size="25" class="cursor-pointer" @click="$event => deletePost()" />
+        <Icon v-if="true"
+              name="material-symbols:delete-outline-sharp" size="25"
+              class="cursor-pointer"
+              @click="$event => deletePost()" />
       </div>
 
       <div class="px-8 mt-4 text-sm">
@@ -92,12 +95,112 @@
       </div>
 
       <div id="Comments" class="bg-[#F8F8F8] z-0 w-full h-[calc(100%-273px)] border-t-2 overflow-auto">
+        <div class="pt-2"></div>
+        <div
+            v-if="false"
+            class="text-center mt-6 text-xl text-gray-500"
+        >
+          No comments ...
+        </div>
+        <div
+            v-else
+            class="flex items-center justify-between px-8 mt-4"
+        >
+          <div class="flex items-center relative w-full">
+            <NuxtLink to="/">
+              <img src="https://picsum.photos/id/8/300/320"
+                   width="40"
+                   class="absolute top-0 rounded-full lg:mx-0 mx-auto"
+                   alt="">
+            </NuxtLink>
+            <div class="ml-14 pt-0.5 w-full">
+              <div class="text-[18px] font-semibold flex items-center justify-between">
+                User name
+                <Icon
+                    v-if="true"
+                    @click="$event => deleteComment()"
+                    class="cursor-pointer"
+                    name="material-symbols:delete-outline-sharp"
+                    size="25"
+                ></Icon>
+              </div>
 
+              <div class="text-[15px] font-light">
+                Lorem ipsum dolor sit amet, consectetur
+                adipisicing elit. Beatae distinctio est
+                ipsum libero quae quisquam quo ratione
+                repudiandae soluta ut.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-28"/>
+      </div>
+
+      <div
+          id="CreateComment"
+          v-if="true"
+          class="absolute flex items-center justify-between bottom-0 bg-white h-[85px] w-full py-5 px-8 border-t-2"
+      >
+        <div
+            :class="inputFocused ? 'border-2 border-gray-400' : 'border-2 border-[#F1F1F2]'"
+            class="bg-[#F1F1F2] flex items-center rounded-lg w-full lg:max-w-[420px]"
+        >
+          <input
+              v-model="comment"
+              @focus="$event => inputFocused = true"
+              @blur="$event => inputFocused = false"
+              class="bg-[#F1F1F2] text-[14px] focus:outline-none w-full lg:max-w-[420px] p-2 rounded-lg"
+              type="text"
+              placeholder="Add comment ..."
+
+          >
+        </div>
+        <button
+            :disabled="!comment"
+            @click="$event => addComment()"
+            :class="comment ? 'text-[#F02C56] cursor-pointer' : 'text-gray-400'"
+            class="font-semibold text-sm ml-5 pr-1"
+        >
+          Post
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+const route = useRoute();
+const router = useRouter();
 
+let video = ref(null);
+let isLoaded = ref(false);
+let comment = ref(null);
+let inputFocused = ref(false);
+
+onMounted(() => {
+  isLoaded.value = true;
+  setTimeout(() => video.value.play(), 500)
+  // video.value.addEventListener('loadeddata', (e) => {
+  //   if (e.target) {
+  //     setTimeout(() => {
+  //       isLoaded.value = true;
+  //     }, 500)
+  //   }
+  // })
+})
+
+onBeforeUnmount(() => {
+
+  video.value.pause()
+  video.value.currentTime = 0
+  video.value.src = ''
+})
+
+watch(() => isLoaded.value, () => {
+  if(isLoaded.value) {
+    setTimeout(() => video.value.play(), 500)
+  }
+})
 </script>

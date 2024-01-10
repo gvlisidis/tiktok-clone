@@ -41,7 +41,6 @@ let isLoaded = ref(false)
 
 onMounted(() => {
   if(video.value) {
-    console.log('332dd3')
     video.value.addEventListener('loadeddata', (e) => {
       if (e.target) {
         setTimeout(() => {
