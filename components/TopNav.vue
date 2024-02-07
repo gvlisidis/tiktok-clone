@@ -19,7 +19,9 @@
         </div>
       </div>
       <div class="flex items-center justify-end gap-3 min-w-[275px] max-w-[320px] w-full">
-        <button class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100">
+        <button
+            @click="isLoggedIn()"
+            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100">
           <Icon name="mdi:plus" color="000000" size="22" />
           <span class="px-2 font-medium text-[15px]">Upload</span>
         </button>
@@ -36,20 +38,22 @@
           <Icon class="mr-5" name="bx:message-detail" color="#161724" size="27" />
           <div class="relative">
             <button
-                @click="$event => showMenu = !showMenu"
+                @click="showMenu = !showMenu"
                 class="mt-1">
-              <img src="https://picsum.photos/id/83/300/320" alt="" class="rounded-full" width="33">
+              <img :src="$userStore.image" alt="" class="rounded-full" width="33">
             </button>
             <div
                 v-if="showMenu"
                 id="PopupMenu" class="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl border top-[43px] -right-2">
               <NuxtLink
+                  :to="`/profile/${$userStore.id}`"
                   @click="$event => showMenu = false"
                   class="flex items-center justify-start py-3 px-2 hover:bg-gray-100 cursor-pointer">
                 <Icon name="ph:user" size="20" />
                 <span class="pl-2 font-semibold text-sm">Profile</span>
               </NuxtLink>
               <div
+                  @click="$event => logout()"
                   class="flex items-center justify-start py-3 px-1.5 hover:bg-gray-100 border-t cursor-pointer">
                 <Icon name="ic:outline-login" size="20" />
                 <span class="pl-2 font-semibold text-sm">Log out</span>
@@ -66,5 +70,33 @@
 const { $userStore, $generalStore } = useNuxtApp();
 
 const route = useRoute()
+const router = useRouter()
 let showMenu = ref(false)
+
+onMounted(() => {
+  document.addEventListener('mouseup', function (e){
+    let popupMenu = document.getElementById('PopupMenu');
+
+    if(!popupMenu.contains(e.target)) {
+      showMenu.value = false
+    }
+  });
+})
+
+const isLoggedIn = () => {
+  if($userStore.id) {
+    router.push('/upload')
+  } else {
+    $generalStore.isLoginOpen = true;
+  }
+}
+
+const logout = () => {
+  try {
+    $userStore.logout();
+    router.push('/')
+  } catch (error) {
+    console.log(error)
+  }
+}
 </script>

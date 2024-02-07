@@ -7,7 +7,7 @@
         v-model:input="email"
         inputType="email"
         :autofocus="true"
-        error=""
+        :error="errors && errors.email ? errors.email[0] : ''"
     />
   </div>
 
@@ -34,25 +34,23 @@
 </template>
 
 <script setup>
-const { $axios } = useNuxtApp();
+const { $userStore, $generalStore } = useNuxtApp();
 let email = ref(null)
 let password = ref(null)
 let errors = ref(null)
 
 const login = async () => {
+  errors.value = null;
+
   try {
-    await $axios.get('/sanctum/csrf-cookie')
+    await $userStore.getTokens();
+    await $userStore.login(email.value, password.value);
+    await $userStore.getUser();
 
-    await $axios.post('/login', {
-      email: 'gv@mail.com',
-      password: 'password'
-    })
-
-    let response = await $axios.get('/api/user')
-
-    console.log(response);
+    $generalStore.isLoginOpen = false;
   } catch (error) {
     console.log(error)
+    errors.value = error.response.data.errors
   }
 }
 </script>
